@@ -72,7 +72,7 @@
                 <a
                   class="nav-link"
                   target="_blank"
-                  href="https://github.com/rexlundstrom"
+                  href="https://github.com/rexlundstrom/mortgage-calculator"
                   >The Repo</a
                 >
               </li>
@@ -108,6 +108,7 @@
                   class="w-50"
                   type="number"
                   placeholder="$25,000"
+                  value="25000"
                   id="loanAmount"
               /></span>
               <span class="py-2 py-md-3 d-flex justify-content-between"
@@ -115,6 +116,7 @@
                   class="w-50"
                   type="number"
                   placeholder="60"
+                  value="60"
                   id="monthAmount"
               /></span>
               <span
@@ -123,6 +125,7 @@
                   class="w-50"
                   type="number"
                   placeholder="5.0"
+                  value="5.0"
                   id="interestRate"
               /></span>
             </div>
@@ -136,21 +139,21 @@
         <div class="col-12 col-md-6 col-lg-7 my-3">
           <h1 class="fs-3 text-center pt-3">
             Your Monthly Payments <br /><br />
-            <p>$<span id="monthlyPayment"></span></p>
+            <p><span id="monthlyPayment"></span></p>
           </h1>
           <div class="row pt-3 pt-md-5">
             <span class="py-md-1 d-flex justify-content-between fs-4"
               >Total Principal
-              <p>$<span id="totalPrincipal"></span></p></span
+              <p><span id="totalPrincipal"></span></p></span
             >
             <span class="py-md-1 d-flex justify-content-between fs-4"
               >Total Interest
-              <p>$<span id="totalInterest"></span></p></span
+              <p><span id="totalInterest"></span></p></span
             >
             <span
               class="pt-md-1 pb-3 pb-md-5 d-flex justify-content-between fs-4"
               >Total Cost
-              <p>$<span id="totalCost"></span></p></span
+              <p><span id="totalCost"></span></p></span
             >
           </div>
         </div>

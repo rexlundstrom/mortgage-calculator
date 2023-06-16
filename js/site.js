@@ -1,5 +1,3 @@
-
-
 // Remaining Balance before the very first month equals the amount of the loan.
 
 // basic math functions
@@ -10,21 +8,6 @@ const calculatePrincipalPayment = (monthlyPayment, interestPayment) =>
   monthlyPayment - interestPayment;
 const calculateRemainingBalance = (previousBalance, principalPayment) =>
   previousBalance - principalPayment;
-
-// show data summary
-
-// const displayStats = (currentEvents) => {
-//   let statistics = calculateStats(currentEvents);
-//   document.getElementById("total").textContent =
-//     statistics.total.toLocaleString();
-//   document.getElementById("average").textContent = Math.round(
-//     statistics.average
-//   ).toLocaleString();
-//   document.getElementById("most").textContent =
-//     statistics.most.toLocaleString();
-//   document.getElementById("least").textContent =
-//     statistics.least.toLocaleString();
-// };
 
 // control function
 
@@ -64,7 +47,6 @@ const getMortgageData = () => {
 // populate table
 
 const displayMortgageData = (calculations) => {
-
   const mortgageTable = document.getElementById("mortgageTable");
   const template = document.getElementById("tableRowTemplate");
   mortgageTable.innerHTML = "";
@@ -72,21 +54,26 @@ const displayMortgageData = (calculations) => {
   for (let i = 0; i < calculations.length; i++) {
     let currentMonth = calculations[i];
     let tableRow = document.importNode(template.content, true);
+    const dollars = new Intl.NumberFormat("en-us", {
+      currency: "USD",
+      style: "currency",
+    });
 
-    tableRow.querySelector('[data-id="month"]').textContent = (
-      Math.round(100 * currentMonth.month) / 100
-    ).toLocaleString();
-    tableRow.querySelector('[data-id="payment"]').textContent =
-      "$" + (Math.round(100 * currentMonth.payment) / 100).toLocaleString();
+    tableRow.querySelector('[data-id="month"]').textContent =
+      currentMonth.month.toLocaleString();
+    tableRow.querySelector('[data-id="payment"]').textContent = dollars.format(
+      Math.abs(currentMonth.payment)
+    );
     tableRow.querySelector('[data-id="principal"]').textContent =
-      "$" + (Math.round(100 * currentMonth.principal) / 100).toLocaleString();
-    tableRow.querySelector('[data-id="interest"]').textContent =
-      "$" + (Math.round(100 * currentMonth.interest) / 100).toLocaleString();
+      dollars.format(Math.abs(currentMonth.principal));
+    tableRow.querySelector('[data-id="interest"]').textContent = dollars.format(
+      Math.abs(currentMonth.interest)
+    );
     tableRow.querySelector('[data-id="totalInterest"]').textContent =
-      "$" +
-      (Math.round(100 * currentMonth.totalInterest) / 100).toLocaleString();
-    tableRow.querySelector('[data-id="balance"]').textContent =
-      "$" + (Math.round(100 * currentMonth.balance) / 100).toLocaleString();
+      dollars.format(Math.abs(currentMonth.totalInterest));
+    tableRow.querySelector('[data-id="balance"]').textContent = dollars.format(
+      Math.abs(currentMonth.balance)
+    );
 
     // tableRow.querySelector("tr").setAttribute("data-event", i+1);
     mortgageTable.appendChild(tableRow);
@@ -102,19 +89,18 @@ const displayTotalPayments = (
   totalPrincipal,
   totalInterest
 ) => {
-  document.getElementById("monthlyPayment").textContent = Math.round(100 * monthlyPayment)/100;
-  document.getElementById("totalPrincipal").textContent = Math.round(100 * totalPrincipal)/100;
-  document.getElementById("totalInterest").textContent = Math.round(100 * totalInterest)/100;
-  document.getElementById("totalCost").textContent = (Math.round(100 * (totalInterest + Number(totalPrincipal)))/100).toLocaleString();
+  const dollars = new Intl.NumberFormat("en-us", {
+    currency: "USD",
+    style: "currency",
+  });
+  console.log(monthlyPayment)
+  document.getElementById("monthlyPayment").textContent =
+    dollars.format(monthlyPayment);
+  document.getElementById("totalPrincipal").textContent =
+    dollars.format(totalPrincipal);
+  document.getElementById("totalInterest").textContent =
+    dollars.format(totalInterest);
+  document.getElementById("totalCost").textContent = (
+    dollars.format((totalInterest + Number(totalPrincipal)))
+  );
 };
-
-// function displayMessage() {
-//   let msg = document.getElementById("message").value;
-//   // alert(msg);
-
-//   Swal.fire({
-//     backdrop: false,
-//     title: "Loan Savvy",
-//     text: msg,
-//   });
-// }

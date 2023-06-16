@@ -73,7 +73,7 @@
                 <a
                   class="nav-link"
                   target="_blank"
-                  href="https://github.com/rexlundstrom"
+                  href="https://github.com/rexlundstrom/mortgage-calculator"
                   >The Repo</a
                 >
               </li>
@@ -105,27 +105,158 @@
         <div class="col-12 col-lg-8">
           <pre class="line-numbers">
             <code class="language-js">
-function displayMessage() {
-    let msg = document.getElementById('message').value;
-    // alert(msg);
+// Remaining Balance before the very first month equals the amount of the loan.
 
-    Swal.fire(
-        {
-            backdrop: false,
-            title: 'Loan Savvy',
-            text: msg
-        }
+// basic math functions
+const calculateMonthlyPayment = (loan, months, rate) =>
+  (loan * (rate / 1200)) / (1 - (1 + rate / 1200) ** -months);
+const calculateInterestPayment = (balance, rate) => balance * (rate / 1200);
+const calculatePrincipalPayment = (monthlyPayment, interestPayment) =>
+  monthlyPayment - interestPayment;
+const calculateRemainingBalance = (previousBalance, principalPayment) =>
+  previousBalance - principalPayment;
+
+// control function
+
+const controller = () => {
+  displayMortgageData(getMortgageData());
+};
+
+const getMortgageData = () => {
+  // get input values
+  let loan = document.getElementById("loanAmount").value;
+  let months = document.getElementById("monthAmount").value;
+  let interest = document.getElementById("interestRate").value;
+
+  let output = [];
+  let principal = loan;
+  let totalInterest = 0;
+  for (let i = 1; i &lt;= months; i++) {
+    const thisRow = {};
+    thisRow.month = i;
+    thisRow.payment = calculateMonthlyPayment(loan, months, interest);
+    thisRow.interest = calculateInterestPayment(principal, interest);
+    thisRow.principal = calculatePrincipalPayment(
+      thisRow.payment,
+      thisRow.interest
     );
-}
+    totalInterest += thisRow.interest;
+    principal -= thisRow.principal;
+    thisRow.totalInterest = totalInterest;
+    thisRow.balance = principal;
+
+    output.push(thisRow);
+  }
+
+  return output;
+};
+
+// populate table
+
+const displayMortgageData = (calculations) => {
+  const mortgageTable = document.getElementById("mortgageTable");
+  const template = document.getElementById("tableRowTemplate");
+  mortgageTable.innerHTML = "";
+
+  for (let i = 0; i &lt; calculations.length; i++) {
+    let currentMonth = calculations[i];
+    let tableRow = document.importNode(template.content, true);
+    const dollars = new Intl.NumberFormat("en-us", {
+      currency: "USD",
+      style: "currency",
+    });
+
+    tableRow.querySelector('[data-id="month"]').textContent =
+      currentMonth.month.toLocaleString();
+    tableRow.querySelector('[data-id="payment"]').textContent = dollars.format(
+      Math.abs(currentMonth.payment)
+    );
+    tableRow.querySelector('[data-id="principal"]').textContent =
+      dollars.format(Math.abs(currentMonth.principal));
+    tableRow.querySelector('[data-id="interest"]').textContent = dollars.format(
+      Math.abs(currentMonth.interest)
+    );
+    tableRow.querySelector('[data-id="totalInterest"]').textContent =
+      dollars.format(Math.abs(currentMonth.totalInterest));
+    tableRow.querySelector('[data-id="balance"]').textContent = dollars.format(
+      Math.abs(currentMonth.balance)
+    );
+
+    // tableRow.querySelector("tr").setAttribute("data-event", i+1);
+    mortgageTable.appendChild(tableRow);
+  }
+  let monthlyPayment = calculations[0].payment;
+  let totalPrincipal = document.getElementById("loanAmount").value;
+  let totalInterest = calculations[calculations.length - 1].totalInterest;
+  displayTotalPayments(monthlyPayment, totalPrincipal, totalInterest);
+};
+
+const displayTotalPayments = (
+  monthlyPayment,
+  totalPrincipal,
+  totalInterest
+) => {
+  const dollars = new Intl.NumberFormat("en-us", {
+    currency: "USD",
+    style: "currency",
+  });
+  console.log(monthlyPayment)
+  document.getElementById("monthlyPayment").textContent =
+    dollars.format(monthlyPayment);
+  document.getElementById("totalPrincipal").textContent =
+    dollars.format(totalPrincipal);
+  document.getElementById("totalInterest").textContent =
+    dollars.format(totalInterest);
+  document.getElementById("totalCost").textContent = (
+    dollars.format((totalInterest + Number(totalPrincipal)))
+  );
+};
+
 
 
             </code>
           </pre>
         </div>
         <div class="col-12 col-lg-4">
-          <p>The code is structured in one function</p>
-          <h5>displayMessage</h5>
-          <p>prints out the message</p>
+          <p>
+            There are four mathematical functions for making loan-related
+            calculations, and four other functions to specifically get our
+            user's inputs, apply the necessary changes, and display them on our
+            table.
+            <br /><br />
+            These latter functions are more interesting to delve into, since
+            they could be repurposed to display any sort of table of numbers,
+            such as your investments growing, the cost of TV's over time, or a
+            range of caloric recommendations for dogs of various body weights.
+          </p>
+          <h5>controller</h5>
+          <p>
+            This function simply gets the ball rolling. Once you click on the
+            "Calculate" button, this function is called and it in turn starts
+            calling <b>displayMortgageData</b> passing in our custom data by
+            using <b>getMortgageData</b> as a parameter.
+          </p>
+          <h5>getMortgageData</h5>
+          <p>
+            Here we grab the user's inputs, call the various loan calculating
+            functions, and return an array of calculated numbers that are yet to
+            be formatted well.
+          </p>
+          <h5>displayMortgageData</h5>
+          <p>
+            Now we have the data we need, so this function accesses the empty
+            table in our HTML and creates as many rows of data as will be needed
+            by using a for loop. the built in international number formatting
+            constructor helps out a great deal by adding commas, dollar signs,
+            and making sure each dollar amount has two decimal points displayed.
+          </p>
+          <h5>displayTotalPayments</h5>
+          <p>
+            This function isn't necessary for our payments table, but it allows
+            us to show off a summary of the most relevant big-picture details
+            right at the top of the page. It works much like the previous
+            function.
+          </p>
         </div>
       </div>
     </main>
